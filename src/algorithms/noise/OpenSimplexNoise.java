@@ -1,4 +1,4 @@
-package template.library;
+package algorithms.noise;
 
 
 import processing.core.*;
@@ -14,11 +14,13 @@ import processing.core.*;
  * @example Hello 
  */
 
-public class HelloLibrary {
+public class OpenSimplexNoise {
 	
 	// myParent is a reference to the parent sketch
 	PApplet myParent;
 
+	OpenSimplexNoiseKS generator;
+	
 	int myVariable = 0;
 	
 	public final static String VERSION = "##library.prettyVersion##";
@@ -31,9 +33,14 @@ public class HelloLibrary {
 	 * @example Hello
 	 * @param theParent the parent PApplet
 	 */
-	public HelloLibrary(PApplet theParent) {
+	public OpenSimplexNoise(PApplet theParent) {
+		this(theParent, System.currentTimeMillis());
+	}
+	
+	public OpenSimplexNoise(PApplet theParent, long seed) {
 		myParent = theParent;
 		welcome();
+		generator = new OpenSimplexNoiseKS(seed);
 	}
 	
 	
@@ -41,10 +48,33 @@ public class HelloLibrary {
 		System.out.println("##library.name## ##library.prettyVersion## by ##author##");
 	}
 	
-	
-	public String sayHello() {
-		return "hello library.";
+	private double remapNoise(double value)
+	{
+		return (value + 1) / 2.0;
 	}
+	
+	public float noise(float xoff)
+	{
+		return (float) remapNoise(this.noise(xoff, 0));
+	}
+	
+	public float noise(float xoff, float yoff)
+	{
+		return (float) remapNoise(generator.eval(xoff, yoff));
+	}
+	
+	public float noise(float xoff, float yoff, float zoff)
+	{
+		return (float) remapNoise(generator.eval(xoff, yoff, zoff));
+	}
+	
+	public float noise(float xoff, float yoff, float zoff, float uoff)
+	{
+		return (float) remapNoise(generator.eval(xoff, yoff, zoff, uoff));
+	}
+	
+	
+	
 	/**
 	 * return the version of the Library.
 	 * 
@@ -54,21 +84,5 @@ public class HelloLibrary {
 		return VERSION;
 	}
 
-	/**
-	 * 
-	 * @param theA the width of test
-	 * @param theB the height of test
-	 */
-	public void setVariable(int theA, int theB) {
-		myVariable = theA + theB;
-	}
-
-	/**
-	 * 
-	 * @return int
-	 */
-	public int getVariable() {
-		return myVariable;
-	}
 }
 
